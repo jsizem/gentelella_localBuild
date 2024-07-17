@@ -1,24 +1,30 @@
-var gulp = require('gulp'),
-    concat = require('gulp-concat'),
-    uglify = require('gulp-uglify'),
-    rename = require('gulp-rename'),
-    sass = require('gulp-ruby-sass'),
-    autoprefixer = require('gulp-autoprefixer'),
-    browserSync = require('browser-sync').create();
+// Dynamically import gulp-autoprefixer
+let autoprefixer;
+import('gulp-autoprefixer').then((module) => {
+    autoprefixer = module.default || module;
+});
 
-var DEST = 'build/';
+// Keep other requires as they are
+const gulp = require('gulp');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+const rename = require('gulp-rename');
+const sass = require('gulp-ruby-sass');
+const browserSync = require('browser-sync').create();
+
+const DEST = 'build/';
 
 gulp.task('scripts', function() {
     return gulp.src([
         'src/js/helpers/*.js',
         'src/js/*.js',
-      ])
-      .pipe(concat('custom.js'))
-      .pipe(gulp.dest(DEST+'/js'))
-      .pipe(rename({suffix: '.min'}))
-      .pipe(uglify())
-      .pipe(gulp.dest(DEST+'/js'))
-      .pipe(browserSync.stream());
+    ])
+    .pipe(concat('custom.js'))
+    .pipe(gulp.dest(`${DEST}/js`)) // Use template literals for cleaner string interpolation
+    .pipe(rename({ suffix: '.min' })) // Note: property name changed to lowercase 'suffix'
+    .pipe(uglify())
+    .pipe(gulp.dest(`${DEST}/js`))
+    .pipe(browserSync.stream());
 });
 
 // TODO: Maybe we can simplify how sass compile the minify and unminify version
